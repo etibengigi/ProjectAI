@@ -1,0 +1,450 @@
+/* src/index.css */
+
+/* בסיס: איפוס, גופן כללי, ורקע ורוד עדין ויוקרתי לכל הדף */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  /* גוון ורוד-לבן רך יותר ונעים לעין */
+  background: linear-gradient(135deg, #fce9f1 0%, #f7d9e7 100%); 
+  min-height: 100vh; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  box-sizing: border-box;
+}
+
+/* מיכל ראשי לאפליקציה - הקומבובוקס המרכזי */
+.app-container {
+  background-color: #ffffff; /* רקע לבן נקי */
+  border-radius: 20px; /* פינות יותר מעוגלות */
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18); /* צל עמוק ורך יותר */
+  padding: 35px; /* ריווח פנימי מעט גדול יותר */
+  max-width: 480px; /* רוחב מקסימלי מעט גדול יותר */
+  width: 90%; 
+  text-align: center; 
+  animation: fadeInScale 0.8s ease-out forwards; 
+  margin: 20px auto; 
+}
+
+/* אנימציה לכניסה חלקה של הקומבובוקס */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95); /* התחלה קרובה יותר לגודל הסופי */
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* כותרות - סגנון עדין יותר, ורוד */
+.rmg-header {
+  font-weight: 700;
+  margin-bottom: 25px;
+  color: #c2185b; /* ורוד פוקסיה עמוק יותר לכותרות */
+}
+.rmg-header.h1 { font-size: 2.6em; margin-bottom: 20px; } 
+.rmg-header.h2 { font-size: 1.7em; margin-bottom: 15px; } 
+.rmg-header.h2-small { 
+  font-size: 1.3em;
+  color: #880e4f; /* ורוד כהה מאוד לכותרות קטנות */
+  margin-top: 25px;
+  margin-bottom: 10px;
+  border-bottom: none;
+  padding-bottom: 0;
+  text-align: center;
+}
+
+/* טקסט - צבע עדין יותר */
+.rmg-text {
+  font-size: 1.05em; 
+  line-height: 1.7;
+  color: #880e4f; /* ורוד כהה מאוד לטקסט */
+  margin-bottom: 20px; 
+}
+
+/* קלט (Input/Textarea) - עגול ועדין */
+.rmg-input {
+  width: 100%;
+  padding: 14px 18px; /* ריווח פנימי גדול יותר */
+  margin-bottom: 18px; 
+  border: 1px solid #f06292; /* גבול ורוד חם */
+  border-radius: 28px; /* פינות מעוגלות יותר */
+  font-size: 1.05em; 
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) inset; /* צל פנימי עדין יותר */
+}
+
+.rmg-input:focus {
+  outline: none;
+  border-color: #c2185b; /* ורוד פוקסיה בפוקוס */
+  box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.2); /* אפקט זוהר ורוד עדין */
+}
+
+textarea.rmg-input {
+  min-height: 140px; /* גובה מינימלי לטקסטאריה */
+  resize: vertical;
+}
+
+/* כפתור - ורוד חזק, בולט */
+.rmg-button {
+  background-color: #e91e63; /* ורוד עמוק וחי */
+  color: white;
+  padding: 14px 28px; /* גדול יותר */
+  border: none;
+  border-radius: 28px; /* פינות מעוגלות יותר */
+  cursor: pointer;
+  font-size: 1.15em; /* גדול יותר */
+  font-weight: 700;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  display: block;
+  width: 100%;
+  box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3); /* צל בולט לוורוד */
+}
+
+.rmg-button:hover {
+  background-color: #ad1457; /* ורוד כהה יותר בלחיצה */
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.4);
+}
+
+.rmg-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* קבוצת כפתורים - כדי לשים אותם זה ליד זה */
+.button-group {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px; /* רווח מעט גדול יותר */
+  margin-top: 20px; 
+}
+
+/* כפתור העתקה - סגנון ורוד-אפרפר */
+.rmg-button.copy {
+  background-color: #bb8f8f; /* ורוד-אפרפר עדין */
+  box-shadow: 0 4px 12px rgba(187, 143, 143, 0.25);
+}
+.rmg-button.copy:hover {
+  background-color: #a37b7b;
+  box-shadow: 0 6px 15px rgba(187, 143, 143, 0.35);
+}
+
+/* כפתור הורדה - סגנון ורוד-בהיר יותר */
+.rmg-button.download {
+  background-color: #f48fb1; /* ורוד בהיר */
+  box-shadow: 0 4px 12px rgba(244, 143, 177, 0.25);
+}
+.rmg-button.download:hover {
+  background-color: #e91e63; /* ורוד עמוק יותר בלחיצה */
+  box-shadow: 0 6px 15px rgba(244, 143, 177, 0.35);
+}
+
+/* כפתור הסבר קוד - סגנון ורוד-כתמתם (כדי לתת גוון שונה אך עדיין בפלטת הוורוד) */
+.rmg-button.explain {
+  background-color: #ffab91; /* ורוד-כתמתם עדין */
+  box-shadow: 0 4px 12px rgba(255, 171, 145, 0.25);
+}
+.rmg-button.explain:hover {
+  background-color: #ff8a65;
+  box-shadow: 0 6px 15px rgba(255, 171, 145, 0.35);
+}
+
+/* כפתור מעבר תצוגה */
+.rmg-button.view-toggle-button {
+  background-color: #c2185b; /* ורוד פוקסיה עמוק */
+  box-shadow: 0 4px 12px rgba(194, 24, 91, 0.25);
+  margin: 0 auto; 
+  width: auto; 
+  padding: 10px 22px; 
+  font-size: 1.05em;
+}
+.rmg-button.view-toggle-button:hover {
+  background-color: #ad1457;
+  box-shadow: 0 6px 15px rgba(194, 24, 91, 0.35);
+}
+
+
+/* בלוק קוד וסקשנים בתוך הפופ-אפ */
+.code-output-section {
+  background-color: #fffafc; /* לבן-ורוד בהיר מאוד */
+  border: 1px solid #fce9f1; /* גבול ורוד רך */
+  border-radius: 15px; 
+  padding: 25px; 
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* צל רך יותר */
+  margin-top: 0; 
+  text-align: left;
+}
+
+.code-block-container {
+  background-color: #2D2D2D; /* אפור כהה-כמעט שחור (כי קוד צריך להיות על רקע כהה) */
+  color: #F8F8F2; /* לבן-אפרפר לקוד */
+  padding: 20px; 
+  border-radius: 10px; 
+  overflow-x: auto;
+  margin-top: 20px; 
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+.code-block-container pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em; 
+}
+
+/* מיכל התצוגה המקדימה החיה */
+.live-preview-container {
+  border: 2px dashed #f06292; /* מסגרת ורודה חמה יותר */
+  border-radius: 15px;
+  padding: 20px; 
+  min-height: 200px; 
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* יישור למעלה בתצוגה מקדימה */
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-top: 20px; 
+  overflow: auto;
+}
+
+/* מיכל הסבר הקוד */
+.explanation-container {
+  background-color: #f8bbd0; /* ורוד בהיר */
+  border: 1px solid #f06292; /* גבול ורוד רך */
+  border-radius: 10px;
+  padding: 18px; 
+  margin-top: 20px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: left;
+}
+
+.explanation-text {
+  font-size: 0.98em; 
+  color: #880e4f; /* ורוד כהה מאוד */
+  line-height: 1.7;
+}
+
+/* סגנונות ספציפיים לתצוגה המקדימה של ה-HtmlPreviewRenderer */
+.preview-wrapper {
+  display: flex;
+  flex-direction: column; 
+  gap: 15px; 
+  align-items: stretch; /* יישור למתיחה לרוחב המיכל */
+  padding: 10px; 
+  width: 100%;
+}
+
+.preview-wrapper button {
+  background-color: #e91e63; /* כפתורים בתוך תצוגה מקדימה יהיו ורודים */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px; /* פינות מעוגלות יותר */
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.preview-wrapper button:hover {
+  background-color: #c2185b;
+}
+
+.preview-wrapper input[type="text"],
+.preview-wrapper input[type="email"],
+.preview-wrapper input[type="password"],
+.preview-wrapper input[type="date"],
+.preview-wrapper input[type="tel"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #f06292; /* גבול ורוד */
+  border-radius: 8px; /* פינות מעוגלות */
+  font-size: 1em;
+  box-sizing: border-box;
+  color: #333;
+}
+
+/* סגנון חדש לתווית הקלט בתצוגה המקדימה */
+.preview-wrapper .input-group-item {
+  width: 100%; /* כדי שיקח את כל הרוחב בתוך הפריוויו */
+  text-align: right; /* יישור טקסט לשמאל עבור עברית */
+  margin-bottom: 5px; /* רווח קטן בין התווית לקלט */
+  color: #880e4f; /* ורוד עמוק לתווית */
+  font-weight: 600;
+  font-size: 0.95em;
+}
+
+.preview-wrapper .rmg-label { /* סגנון ספציפי לתווית עצמה */
+  display: block; /* וודא שהתווית מקבלת שורה משלה */
+  margin-bottom: 5px;
+}
+
+
+.preview-wrapper p {
+  font-size: 1em;
+  color: #880e4f; /* ורוד כהה מאוד */
+  margin-bottom: 10px;
+  text-align: right; /* יישור לשמאל עבור עברית */
+}
+
+.preview-wrapper h1, .preview-wrapper h2, .preview-wrapper h3, .preview-wrapper h4, .preview-wrapper h5, .preview-wrapper h6 {
+  font-weight: bold;
+  color: #c2185b; /* ורוד פוקסיה עמוק */
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: right; /* יישור לשמאל עבור עברית */
+}
+.preview-wrapper h1 { font-size: 1.8em; }
+.preview-wrapper h2 { font-size: 1.5em; }
+.preview-wrapper h3 { font-size: 1.2em; }
+.preview-wrapper h4 { font-size: 1.1em; }
+
+
+.preview-wrapper img {
+  max-width: 120px; /* תמונה קטנה יותר */
+  height: auto;
+  border-radius: 50%; /* תמונה עגולה תמיד */
+  border: 4px solid #f06292; /* מסגרת ורודה בהירה */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  display: block; 
+  margin: 0 auto 15px auto; /* ריכוז תמונה ורווח מלמטה */
+}
+
+/* סגנונות כלליים יותר (שכבר היו, רק כדי לוודא) */
+.preview-placeholder {
+  color: #999;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  font-size: 1.1em;
+}
+
+.live-preview-error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border: 1px solid #ef9a9a;
+  padding: 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* סגנונות הפופ-אפ */
+.modal-overlay {
+  position: fixed; /* נשאר מקובע גם בגלילה */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* רקע שחור שקוף */
+  display: flex;
+  justify-content: center; /* ריכוז אופקי */
+  align-items: center; /* ריכוז אנכי */
+  z-index: 1000; /* וודא שהוא מעל שאר התוכן */
+  animation: fadeIn 0.3s ease-out forwards; /* אנימציית כניסה */
+}
+
+.modal-content {
+  background-color: #ffffff; /* רקע לבן לפופ-אפ */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3); /* צל בולט */
+  position: relative; /* עבור כפתור הסגירה הממוקם */
+  max-width: 800px; /* רוחב מקסימלי לפופ-אפ */
+  width: 95%; /* רספונסיביות */
+  max-height: 90vh; /* גובה מקסימלי, מאפשר גלילה אם התוכן ארוך */
+  overflow-y: auto; /* מאפשר גלילה בתוך הפופ-אפ אם התוכן חורג */
+  animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; /* אנימציית קפיצה קטנה */
+}
+
+.modal-close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2em;
+  color: #d81b60; /* צבע ורוד לכפתור סגירה */
+  cursor: pointer;
+  padding: 5px;
+  line-height: 1; /* יישור אנכי */
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.modal-close-button:hover {
+  transform: scale(1.1);
+  color: #a7004b;
+}
+
+/* אנימציות */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* רספונסיביות כללית - לוודא שהכל נראה טוב במובייל */
+@media (max-width: 600px) {
+  .app-container {
+    margin: 15px;
+    padding: 20px;
+    border-radius: 12px;
+  }
+  .rmg-header.h1 { font-size: 2em; }
+  .rmg-header.h2 { font-size: 1.4em; }
+  .rmg-header.h2-small { font-size: 1.2em; }
+  .rmg-input { padding: 10px 12px; font-size: 0.9em; }
+  .rmg-button { padding: 10px 20px; font-size: 1em; }
+  .code-block-container,
+  .code-output-section,
+  .live-preview-container,
+  .explanation-container {
+    padding: 15px;
+  }
+  .button-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .rmg-button {
+    width: 100%;
+    margin-left: 0 !important; 
+  }
+  .rmg-button.download,
+  .rmg-button.explain,
+  .rmg-button.view-toggle-button {
+    margin-left: 0; 
+  }
+  .modal-content {
+    padding: 20px;
+    margin: 10px; 
+  }
+  .modal-close-button {
+    font-size: 1.8em;
+    top: 10px;
+    right: 10px;
+  }
+
+  /* התאמה לרכיבים בתוך התצוגה המקדימה במובייל */
+  .preview-wrapper h1, .preview-wrapper h2, .preview-wrapper h3, .preview-wrapper h4 {
+    font-size: 1.4em; /* הקטנת כותרות בתצוגה המקדימה */
+  }
+  .preview-wrapper p, .preview-wrapper input, .preview-wrapper button, .preview-wrapper .input-group-item {
+    font-size: 0.9em; /* הקטנת פונטים */
+  }
+}
