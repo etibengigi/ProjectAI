@@ -1,21 +1,18 @@
- console.log('--- Server script is starting ---'); // הוסף את השורה הזו
-require('dotenv').config();
-
+// mockup-generator-api/server.js
+require('dotenv').config(); // טוען משתני סביבה מהקובץ .env
 const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const port = 5000; 
+const port = 5000; // פורט ברירת מחדל לשרת ה-API
 
-
-app.use(cors()); 
-
-app.use(express.json()); 
-
+// Middleware
+app.use(cors()); // מאפשר בקשות Cross-Origin מה-React App
+app.use(express.json()); // מאפשר לנתח בקשות עם גוף JSON
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ""; 
 
-
+// נקודת קצה (API Endpoint) ליצירת דגמים
 app.post('/api/generate-mockup', async (req, res) => {
   const { description } = req.body;
 
@@ -23,47 +20,39 @@ app.post('/api/generate-mockup', async (req, res) => {
     return res.status(400).json({ error: 'תיאור נדרש ליצירת הדגם.' });
   }
 
-  if (!GEMINI_API_KEY) {
-      console.error('שגיאה: GEMINI_API_KEY אינו מוגדר בקובץ .env. אנא הגדר אותו כראוי.');
-      return res.status(500).json({ error: 'מפתח API של Gemini חסר או לא תקין בשרת.' });
-  }
-
   try {
     let chatHistory = [];
-
-    const prompt = `צור קטע קוד JSX עבור React על בסיס התיאור הבא: "${description}". 
-      השתמש אך ורק ברכיבי ה-React הבאים: RMGHeader, RMGText, RMGInput, RMGButton, RMGImage. 
-      אל תכלול ייבוא (imports) לקבצים אלו, ואל תכלול שום עיצוב CSS חיצוני או inline, אלא אם כן 
-      זה הכרחי (אז תשתמש ב-style={{}}). ספק אך ורק את קטע קוד ה-JSX, ללא הסברים נוספים. 
-      ודא שהקוד תקין ומעוצב היטב. לדוגמה: <RMGButton title="לחץ" />`;
+    // הנחיה משופרת למודל AI ליצור קוד JSX עם סגנונות inline
+    const prompt = `
+      צור קטע קוד JSX עבור React על בסיס התיאור הבא: "${description}".
+      השתמש אך ורק ברכיבי ה-React הבאים: RMGHeader, RMGText, RMGInput, RMGButton, RMGImage.
+      אל תכלול ייבוא (imports) לקבצים אלו.
+      
+      **עבור צבעים וסגנונות מותאמים אישית (כמו צבע רקע, צבע טקסט, גודל גופן), השתמש תמיד בתכונת \`style\` עם אובייקט JavaScript inline. לדוגמה: \`style={{ backgroundColor: 'red', color: 'white', fontSize: '16px' }}\`.**
+      
+      ספק אך ורק את קטע קוד ה-JSX, ללא הסברים נוספים או עטיפות קוד כמו \`\`\`jsx.
+      ודא שהקוד תקין ומעוצב היטב.
+      
+      דוגמאות:
+      - אם תתבקש 'כפתור אדום עם טקסט לבן', צור: \`<RMGButton title="לחץ" style={{ backgroundColor: 'red', color: 'white' }} />\`
+      - אם תתבקש 'טקסט ירוק', צור: \`<RMGText content="טקסט ירוק" style={{ color: 'green' }} />\`
+      - אם תתבקש 'שדה קלט שם בצבע רקע תכלת וטקסט כחול', צור: \`<RMGInput label="שם:" type="text" style={{ backgroundColor: 'lightblue', color: 'blue' }} />\`
+      
+      הקפד לתרגם את התיאורים לפרמטרים של הרכיבים (כמו title, label, placeholder).
+    `;
     
     chatHistory.push({ role: "user", parts: [{ text: prompt }] });
     const payload = { contents: chatHistory };
     
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
     
-    console.log('\n--- Gemini API Request Log ---');
-    console.log('1. Prompt שנשלח ל-Gemini API:', prompt); // לוג 1: מראה מה נשלח ל-AI
-    console.log('2. Payload (גוף הבקשה ל-AI):', JSON.stringify(payload, null, 2)); // לוג 2: מראה את גוף הבקשה ל-AI
-    console.log('3. API URL:', apiUrl); 
-
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
 
-    console.log('4. סטטוס תגובה גולמית מ-Gemini API:', response.status); // לוג 4: מראה את סטטוס התגובה הגולמית (לדוגמה 200, 400, 403, 500)
-    if (!response.ok) {
-        const errorText = await response.text(); 
-        console.error('5. שגיאת תגובה לא תקינה מ-Gemini API (טקסט גולמי):', errorText); // לוג 5: מראה את טקסט השגיאה הגולמי
-        throw new Error(`Gemini API returned status ${response.status}: ${errorText}`);
-    }
-
     const result = await response.json(); 
-
-    console.log('6. תגובת JSON מנותחת מ-Gemini API:', JSON.stringify(result, null, 2)); // לוג 6: מראה את כל התגובה המנותחת מה-AI
-    console.log('--- סוף לוגים של Gemini API Request ---\n');
 
     if (result.candidates && result.candidates.length > 0 &&
         result.candidates[0].content && result.candidates[0].content.parts &&
@@ -74,17 +63,17 @@ app.post('/api/generate-mockup', async (req, res) => {
 
       res.json({ jsx: jsxCode });
     } else {
-      console.error('מבנה תגובה לא צפוי מ-Gemini API (json.candidates או content חסרים):', JSON.stringify(result, null, 2));
-      res.status(500).json({ error: 'נכשל ביצירת JSX. מבנה תגובה לא צפוי מה-AI.' });
+      console.error('מבנה תגובה לא צפוי מה-Gemini API:', JSON.stringify(result, null, 2));
+      res.status(500).json({ error: 'נכשל ביצירת JSX. מבנה תגובה לא צפוי.' });
     }
 
   } catch (error) {
-    console.error('שגיאה כללית בלכידת הדגם דרך Gemini API:', error);
-    console.error(error); 
+    console.error('שגיאה ביצירת הדגם דרך Gemini API:', error);
     res.status(500).json({ error: 'נכשל ביצירת הדגם. אנא נסה שוב מאוחר יותר.' });
   }
 });
 
+// הפעלת השרת
 app.listen(port, () => {
   console.log(`שרת מחולל הדגמים מאזין בכתובת: http://localhost:${port}`);
 });

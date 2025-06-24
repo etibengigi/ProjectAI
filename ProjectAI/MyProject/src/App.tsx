@@ -8,7 +8,7 @@ import RMGImage from './components/RMGImage';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { docco } from 'react-syntax-highlighter/dist/esm/styles/hljs'; 
 
-// רכיב לרינדור קוד JSX כ-HTML באמצעות Regex (עם תמיכה ב-label עבור RMGInput)
+// רכיב לרינדור קוד JSX כ-HTML באמצעות Regex (עם תמיכה משופרת בסגנונות ותוויות)
 const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
   const [error, setError] = useState<string>('');
 
@@ -21,26 +21,43 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
       const extractProps = (tagString: string): { [key: string]: string | React.CSSProperties } => {
         const props: { [key: string]: string | React.CSSProperties } = {};
         
+        // Regex for attributes: key="value" OR key={value}
         const attrRegex = /(\w+)=(?:"([^"]*)"|{([^}]*)})/g;
         let match;
         while ((match = attrRegex.exec(tagString)) !== null) {
           const key = match[1];
-          let value = match[2] || match[3];
+          let value = match[2] || match[3]; // Group 2 for string, Group 3 for expression in curly braces
 
           if (key === 'style') {
             try {
-              const styleObjStr = value.replace(/'/g, '"').replace(/([a-zA-Z][a-zA-Z0-9]*)\s*:/g, '"$1":').replace(/,\s*}/g, '}');
-              const parsedStyle = JSON.parse(`{${styleObjStr}}`); 
-              const cssStyle = Object.entries(parsedStyle)
+              // Extract content within curly braces if present
+              let styleContent = value.startsWith('{') && value.endsWith('}') ? value.slice(1, -1) : value;
+              
+              const styleProps: { [key: string]: string } = {};
+              // Regex to parse CSS-like key: value pairs, even without quotes on values
+              // Handles: key: 'value', key: "value", key: value, key: #hex, key: rgb(...)
+              const stylePropRegex = /(\w+)\s*:\s*([^,;{}]+)/g; 
+              let styleMatch;
+              while ((styleMatch = stylePropRegex.exec(styleContent)) !== null) {
+                const propKey = styleMatch[1].trim();
+                let propValue = styleMatch[2].trim();
+                // Remove surrounding quotes from the value if they exist
+                propValue = propValue.replace(/^['"]|['"]$/g, ''); 
+                styleProps[propKey] = propValue;
+              }
+
+              // Convert camelCase to kebab-case and join into a CSS string
+              const cssStyle = Object.entries(styleProps)
                 .map(([cssKey, cssValue]) => {
                   const kebabKey = cssKey.replace(/([A-Z])/g, '-$1').toLowerCase();
                   return `${kebabKey}: ${cssValue}`;
                 })
                 .join('; ');
               props.style = cssStyle;
+              // console.log(`Parsed style for ${key}:`, cssStyle); // Debug log
             } catch (e) {
               console.warn("שגיאה בניתוח סגנון inline:", e, value);
-              props.style = ''; 
+              props.style = ''; // Fallback to empty style if parsing fails
             }
           } else {
             props[key] = value;
@@ -49,6 +66,7 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         return props;
       };
 
+      // RMGHeader - ensure style is applied
       htmlCode = htmlCode.replace(/<RMGHeader([^>]*?)\/?>/g, (match, attrs) => {
         const props = extractProps(attrs);
         const text = props.text as string || 'כותרת';
@@ -58,6 +76,7 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         return `<h${level} class="rmg-header h${level} ${className}"${style}>${text}</h${level}>`;
       });
 
+      // RMGText - ensure style is applied
       htmlCode = htmlCode.replace(/<RMGText([^>]*?)>(.*?)<\/RMGText>/g, (match, attrs, content) => {
         const props = extractProps(attrs);
         const className = props.className as string || '';
@@ -65,16 +84,15 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         return `<p class="rmg-text ${className}"${style}>${content}</p>`;
       });
 
-      // RMGInput - שינוי זה מטפל גם בתווית
+      // RMGInput - ensure style is applied, handles label and placeholder
       htmlCode = htmlCode.replace(/<RMGInput([^>]*?)\/?>/g, (match, attrs) => {
         const props = extractProps(attrs);
         const type = props.type as string || 'text';
-        const placeholder = props.placeholder as string || ''; // פלייסוולד יכול להיות ריק אם יש תווית
-        const label = props.label as string | undefined; // חילוץ התווית
+        const placeholder = props.placeholder as string || ''; 
+        const label = props.label as string | undefined; 
         const className = props.className as string || '';
         const style = props.style ? ` style="${props.style}"` : '';
         
-        // עוטף את התווית והקלט בקבוצה
         return `
           <div class="input-group-item">
             ${label ? `<label class="rmg-label">${label}</label>` : ''}
@@ -83,6 +101,7 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         `;
       });
 
+      // RMGButton - ensures style is applied
       htmlCode = htmlCode.replace(/<RMGButton([^>]*?)(?:\/>|><\/RMGButton>)/g, (match, attrs) => {
         const props = extractProps(attrs);
         const title = props.title as string || 'כפתור';
@@ -91,6 +110,7 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         return `<button class="rmg-button ${className}"${style} onclick="alert('נלחץ בתצוגה!')">${title}</button>`;
       });
 
+      // RMGImage - ensures style is applied
       htmlCode = htmlCode.replace(/<RMGImage([^>]*?)\/?>/g, (match, attrs) => {
         const props = extractProps(attrs);
         const src = props.src as string || 'https://via.placeholder.com/100x100?text=תמונה';
@@ -100,7 +120,9 @@ const HtmlPreviewRenderer: React.FC<{ jsxCode: string }> = ({ jsxCode }) => {
         return `<img src="${src}" alt="${alt}" class="rmg-image ${className}"${style} />`;
       });
 
+      // Clean up empty lines created by replacements
       htmlCode = htmlCode.replace(/^\s*[\r\n]/gm, ''); 
+      // Wrap the generated HTML in a single div for consistent rendering
       htmlCode = `<div class="preview-wrapper">${htmlCode}</div>`;
 
       return { __html: htmlCode };
